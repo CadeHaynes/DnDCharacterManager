@@ -1,0 +1,6 @@
+@DnDCharacterManager_HostAddress = http://localhost:5062
+
+GET {{DnDCharacterManager_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
