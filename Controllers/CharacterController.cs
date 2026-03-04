@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 
 using DnDCharacterManager.Data;
+using DnDCharacterManager.DTOs;
 using DnDCharacterManager.Models;
+using System.Reflection.Metadata.Ecma335;
 
 namespace DnDCharacterManager.Controllers
 {
@@ -19,7 +21,7 @@ namespace DnDCharacterManager.Controllers
 
         // GET: api/Character
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Character>>> GetCharacters()
+        public async Task<ActionResult<IEnumerable<CharacterDto>>> GetCharacters()
         {
             // Gets the characters and their abilities/items.
             var characters = await _context.Characters
@@ -27,12 +29,14 @@ namespace DnDCharacterManager.Controllers
                 .Include(c => c.Items)
                 .ToListAsync();
 
-            return characters;
+            var characterDtos = characters.Select(c => CharactertoDTO(c)).ToList();
+
+            return characterDtos;
         }
 
         // GET: api/Character/[number]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Character>> GetCharacter(int id)
+        public async Task<ActionResult<CharacterDto>> GetCharacter(int id)
         {
             // Gets all the characters, then sets character to the character (if any) whose ID matches the id parameter.
             var character = await _context.Characters
@@ -45,19 +49,25 @@ namespace DnDCharacterManager.Controllers
                 return NotFound();
             }
 
-            return character;
+            var result = CharactertoDTO(character);
+
+            return result;
         }
 
         // POST: api/Character
         [HttpPost]
-        public async Task<ActionResult<Character>> PostCharacter(Character character)
+        public async Task<ActionResult<Character>> PostCharacter(CharacterCreateDto dto)
         {
+            var character = DTOtoCharacterCreate(dto);
+
             // Adds the character to the database, then waits for the context to save the changes before returning.
             _context.Characters.Add(character);
             await _context.SaveChangesAsync();
 
+            var result = CharactertoDTO(character);
+
             // Uses GetCharacter to confirm character exists in database.
-            return CreatedAtAction(nameof(GetCharacter), new { id = character.Id }, character);
+            return CreatedAtAction(nameof(GetCharacter), new { id = character.Id }, result);
         }
 
         // DELETE: api/Character
@@ -76,6 +86,66 @@ namespace DnDCharacterManager.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        Character DTOtoCharacterCreate(CharacterCreateDto dto)
+        {
+            var character = new Character
+            {
+                Name = dto.Name,
+                Strength = dto.Strength,
+                Dexterity = dto.Dexterity,
+                Constitution = dto.Constitution,
+                Intelligence = dto.Intelligence,
+                Wisdom = dto.Wisdom,
+                Charisma = dto.Charisma,
+
+                Abilities = dto.Abilities.Select(a => new Ability
+                {
+                    Name = a.Name,
+                    Description = a.Description
+                }).ToList(),
+                
+                Items = dto.Items.Select(i => new Item
+                {
+                    Name = i.Name,
+                    Description = i.Description
+                }).ToList()
+            };
+
+            return character;
+        }
+
+        CharacterDto CharactertoDTO(Character character)
+        {
+            var result = new CharacterDto()
+            {
+                Id = character.Id,
+
+                Name = character.Name,
+                Strength = character.Strength,
+                Dexterity = character.Dexterity,
+                Constitution = character.Constitution,
+                Intelligence = character.Intelligence,
+                Wisdom = character.Wisdom,
+                Charisma = character.Charisma,
+
+                Abilities = character.Abilities.Select(a => new AbilityDto
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Description = a.Description
+                }).ToList(),
+
+                Items = character.Items.Select(i => new ItemDto
+                {
+                    Id = i.Id,
+                    Name = i.Name,
+                    Description = i.Description
+                }).ToList()
+            };
+
+            return result;
         }
     }
 }

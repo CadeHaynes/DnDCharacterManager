@@ -1,10 +1,8 @@
-﻿using System.Text.Json.Serialization;
-
-namespace DnDCharacterManager.Models
+﻿namespace DnDCharacterManager.DTOs
 {
-    public class Ability
+    public class ItemDto
     {
-        // Ability Info
+        // Item Info
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
