@@ -21,7 +21,7 @@ namespace DnDCharacterManager.Controllers
 
         // GET: api/Character
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CharacterDto>>> GetCharacters()
+        public async Task<ActionResult<IEnumerable<CharacterGetDto>>> GetCharacters()
         {
             // Gets the characters and their abilities/items.
             var characters = await _context.Characters
@@ -29,14 +29,14 @@ namespace DnDCharacterManager.Controllers
                 .Include(c => c.Items)
                 .ToListAsync();
 
-            var characterDtos = characters.Select(c => CharactertoDTO(c)).ToList();
+            var characterDtos = characters.Select(c => CharactertoGetDTO(c)).ToList();
 
             return characterDtos;
         }
 
         // GET: api/Character/[number]
         [HttpGet("{id}")]
-        public async Task<ActionResult<CharacterDto>> GetCharacter(int id)
+        public async Task<ActionResult<CharacterGetDto>> GetCharacter(int id)
         {
             // Gets all the characters, then sets character to the character (if any) whose ID matches the id parameter.
             var character = await _context.Characters
@@ -49,7 +49,7 @@ namespace DnDCharacterManager.Controllers
                 return NotFound();
             }
 
-            var result = CharactertoDTO(character);
+            var result = CharactertoGetDTO(character);
 
             return result;
         }
@@ -129,6 +129,37 @@ namespace DnDCharacterManager.Controllers
                 Intelligence = character.Intelligence,
                 Wisdom = character.Wisdom,
                 Charisma = character.Charisma,
+
+                Abilities = character.Abilities.Select(a => new AbilityDto
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Description = a.Description
+                }).ToList(),
+
+                Items = character.Items.Select(i => new ItemDto
+                {
+                    Id = i.Id,
+                    Name = i.Name,
+                    Description = i.Description
+                }).ToList()
+            };
+
+            return result;
+        }
+        CharacterGetDto CharactertoGetDTO(Character character)
+        {
+            var result = new CharacterGetDto()
+            {
+                //Id = character.Id,
+
+                Name = character.Name,
+                //Strength = character.Strength,
+                //Dexterity = character.Dexterity,
+                //Constitution = character.Constitution,
+                //Intelligence = character.Intelligence,
+                //Wisdom = character.Wisdom,
+                //Charisma = character.Charisma,
 
                 Abilities = character.Abilities.Select(a => new AbilityDto
                 {
