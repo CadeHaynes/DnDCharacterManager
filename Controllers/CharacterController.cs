@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using DnDCharacterManager.Data;
 using DnDCharacterManager.DTOs;
 using DnDCharacterManager.Models;
-using System.Reflection.Metadata.Ecma335;
 
 namespace DnDCharacterManager.Controllers
 {
@@ -29,7 +28,7 @@ namespace DnDCharacterManager.Controllers
                 .Include(c => c.Items)
                 .ToListAsync();
 
-            var characterDtos = characters.Select(c => CharactertoGetDTO(c)).ToList();
+            var characterDtos = characters.Select(c => CharacterToGetDto(c)).ToList();
 
             return characterDtos;
         }
@@ -49,7 +48,7 @@ namespace DnDCharacterManager.Controllers
                 return NotFound();
             }
 
-            var result = CharactertoGetDTO(character);
+            var result = CharacterToGetDto(character);
 
             return result;
         }
@@ -58,13 +57,13 @@ namespace DnDCharacterManager.Controllers
         [HttpPost]
         public async Task<ActionResult<Character>> PostCharacter(CharacterCreateDto dto)
         {
-            var character = DTOtoCharacterCreate(dto);
+            var character = CreateDtoToCharacter(dto);
 
             // Adds the character to the database, then waits for the context to save the changes before returning.
             _context.Characters.Add(character);
             await _context.SaveChangesAsync();
 
-            var result = CharactertoDTO(character);
+            var result = CharacterToDto(character);
 
             // Uses GetCharacter to confirm character exists in database.
             return CreatedAtAction(nameof(GetCharacter), new { id = character.Id }, result);
@@ -88,7 +87,36 @@ namespace DnDCharacterManager.Controllers
             return NoContent();
         }
 
-        Character DTOtoCharacterCreate(CharacterCreateDto dto)
+        // PUT: api/Character/[number]
+        [HttpPut("{id}")]
+        public async Task<ActionResult<CharacterDto>> UpdateCharacter(int id, CharacterUpdateDto dto)
+        {
+            var character = await _context.Characters
+                .Include(c => c.Abilities)
+                .Include(c => c.Items)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (character == null)
+            {
+                return NotFound();
+            }
+
+            character = UpdateDtoToCharacter(dto, character);
+
+            //character.Name = dto.Name;
+            //character.Strength = dto.Strength;
+            //character.Dexterity = dto.Dexterity;
+            //character.Constitution = dto.Constitution;
+            //character.Intelligence = dto.Intelligence;
+            //character.Wisdom = dto.Wisdom;
+            //character.Charisma = dto.Charisma;
+
+            await _context.SaveChangesAsync();
+
+            return CharacterToDto(character);
+        }
+        
+        Character CreateDtoToCharacter(CharacterCreateDto dto)
         {
             var character = new Character
             {
@@ -116,7 +144,7 @@ namespace DnDCharacterManager.Controllers
             return character;
         }
 
-        CharacterDto CharactertoDTO(Character character)
+        CharacterDto CharacterToDto(Character character)
         {
             var result = new CharacterDto()
             {
@@ -147,7 +175,8 @@ namespace DnDCharacterManager.Controllers
 
             return result;
         }
-        CharacterGetDto CharactertoGetDTO(Character character)
+
+        CharacterGetDto CharacterToGetDto(Character character)
         {
             var result = new CharacterGetDto()
             {
@@ -169,6 +198,19 @@ namespace DnDCharacterManager.Controllers
             };
 
             return result;
+        }
+
+        Character UpdateDtoToCharacter(CharacterUpdateDto dto, Character character)
+        {
+            character.Name = dto.Name;
+            character.Strength = dto.Strength;
+            character.Dexterity = dto.Dexterity;
+            character.Constitution = dto.Constitution;
+            character.Intelligence = dto.Intelligence;
+            character.Wisdom = dto.Wisdom;
+            character.Charisma = dto.Charisma;
+
+            return character;
         }
     }
 }
