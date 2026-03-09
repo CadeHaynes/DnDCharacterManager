@@ -151,15 +151,7 @@ namespace DnDCharacterManager.Controllers
         {
             var result = new CharacterGetDto()
             {
-                //Id = character.Id,
-
                 Name = character.Name,
-                //Strength = character.Strength,
-                //Dexterity = character.Dexterity,
-                //Constitution = character.Constitution,
-                //Intelligence = character.Intelligence,
-                //Wisdom = character.Wisdom,
-                //Charisma = character.Charisma,
 
                 Abilities = character.Abilities.Select(a => new AbilityDto
                 {
