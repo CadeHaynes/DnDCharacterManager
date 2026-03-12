@@ -103,14 +103,6 @@ namespace DnDCharacterManager.Controllers
 
             character = UpdateDtoToCharacter(dto, character);
 
-            //character.Name = dto.Name;
-            //character.Strength = dto.Strength;
-            //character.Dexterity = dto.Dexterity;
-            //character.Constitution = dto.Constitution;
-            //character.Intelligence = dto.Intelligence;
-            //character.Wisdom = dto.Wisdom;
-            //character.Charisma = dto.Charisma;
-
             await _context.SaveChangesAsync();
 
             return CharacterToDto(character);
@@ -160,14 +152,12 @@ namespace DnDCharacterManager.Controllers
 
                 Abilities = character.Abilities.Select(a => new AbilityDto
                 {
-                    Id = a.Id,
                     Name = a.Name,
                     Description = a.Description
                 }).ToList(),
 
                 Items = character.Items.Select(i => new ItemDto
                 {
-                    Id = i.Id,
                     Name = i.Name,
                     Description = i.Description
                 }).ToList()
@@ -184,14 +174,12 @@ namespace DnDCharacterManager.Controllers
 
                 Abilities = character.Abilities.Select(a => new AbilityDto
                 {
-                    Id = a.Id,
                     Name = a.Name,
                     Description = a.Description
                 }).ToList(),
 
                 Items = character.Items.Select(i => new ItemDto
                 {
-                    Id = i.Id,
                     Name = i.Name,
                     Description = i.Description
                 }).ToList()
