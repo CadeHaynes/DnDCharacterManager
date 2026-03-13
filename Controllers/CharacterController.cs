@@ -170,18 +170,21 @@ namespace DnDCharacterManager.Controllers
         {
             var result = new CharacterGetDto()
             {
+                Id = character.Id,
                 Name = character.Name,
 
                 Abilities = character.Abilities.Select(a => new AbilityDto
                 {
                     Name = a.Name,
-                    Description = a.Description
+                    Description = a.Description,
+                    CharacterId = a.CharacterId
                 }).ToList(),
 
                 Items = character.Items.Select(i => new ItemDto
                 {
                     Name = i.Name,
-                    Description = i.Description
+                    Description = i.Description,
+                    CharacterId = i.CharacterId
                 }).ToList()
             };
 
