@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
-
-namespace DnDCharacterManager.DTOs
+﻿namespace DnDCharacterManager.DTOs
 {
     public class CharacterGetDto
     {
