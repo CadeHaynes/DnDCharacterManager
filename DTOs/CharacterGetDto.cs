@@ -1,4 +1,6 @@
-﻿namespace DnDCharacterManager.DTOs
+﻿using DnDCharacterManager.Models;
+
+namespace DnDCharacterManager.DTOs
 {
     public class CharacterGetDto
     {
@@ -9,5 +11,30 @@
         //Character possessions
         public List<ItemDto> Items { get; set; } = new();
         public List<AbilityDto> Abilities { get; set; } = new();
+
+        public static CharacterGetDto FromCharacter(Character character)
+        {
+            var dto = new CharacterGetDto()
+            {
+                Id = character.Id,
+                Name = character.Name,
+
+                Abilities = character.Abilities.Select(a => new AbilityDto
+                {
+                    Name = a.Name,
+                    Description = a.Description,
+                    CharacterId = a.CharacterId
+                }).ToList(),
+
+                Items = character.Items.Select(i => new ItemDto
+                {
+                    Name = i.Name,
+                    Description = i.Description,
+                    CharacterId = i.CharacterId
+                }).ToList()
+            };
+
+            return dto;
+        }
     }
 }

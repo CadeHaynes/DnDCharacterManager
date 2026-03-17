@@ -28,7 +28,7 @@ namespace DnDCharacterManager.Controllers
                 .Include(c => c.Items)
                 .ToListAsync();
 
-            var characterDtos = characters.Select(c => CharacterToGetDto(c)).ToList();
+            var characterDtos = characters.Select(c => CharacterGetDto.FromCharacter(c)).ToList();
 
             return characterDtos;
         }
@@ -48,7 +48,7 @@ namespace DnDCharacterManager.Controllers
                 return NotFound();
             }
 
-            var result = CharacterToGetDto(character);
+            var result = CharacterGetDto.FromCharacter(character);
 
             return result;
         }
@@ -57,13 +57,13 @@ namespace DnDCharacterManager.Controllers
         [HttpPost]
         public async Task<ActionResult<Character>> PostCharacter(CharacterCreateDto dto)
         {
-            var character = CreateDtoToCharacter(dto);
+            var character = CharacterCreateDto.ToCharacter(dto);
 
             // Adds the character to the database, then waits for the context to save the changes before returning.
             _context.Characters.Add(character);
             await _context.SaveChangesAsync();
 
-            var result = CharacterToDto(character);
+            var result = CharacterDto.FromCharacter(character);
 
             // Uses GetCharacter to confirm character exists in database.
             return CreatedAtAction(nameof(GetCharacter), new { id = character.Id }, result);
@@ -101,107 +101,11 @@ namespace DnDCharacterManager.Controllers
                 return NotFound();
             }
 
-            character = UpdateDtoToCharacter(dto, character);
+            character = CharacterUpdateDto.UpdateCharacter(dto, character);
 
             await _context.SaveChangesAsync();
 
-            return CharacterToDto(character);
-        }
-        
-        Character CreateDtoToCharacter(CharacterCreateDto dto)
-        {
-            var character = new Character
-            {
-                Name = dto.Name,
-                Strength = dto.Strength,
-                Dexterity = dto.Dexterity,
-                Constitution = dto.Constitution,
-                Intelligence = dto.Intelligence,
-                Wisdom = dto.Wisdom,
-                Charisma = dto.Charisma,
-
-                Abilities = dto.Abilities.Select(a => new Ability
-                {
-                    Name = a.Name,
-                    Description = a.Description
-                }).ToList(),
-                
-                Items = dto.Items.Select(i => new Item
-                {
-                    Name = i.Name,
-                    Description = i.Description
-                }).ToList()
-            };
-
-            return character;
-        }
-
-        CharacterDto CharacterToDto(Character character)
-        {
-            var result = new CharacterDto()
-            {
-                Id = character.Id,
-
-                Name = character.Name,
-                Strength = character.Strength,
-                Dexterity = character.Dexterity,
-                Constitution = character.Constitution,
-                Intelligence = character.Intelligence,
-                Wisdom = character.Wisdom,
-                Charisma = character.Charisma,
-
-                Abilities = character.Abilities.Select(a => new AbilityDto
-                {
-                    Name = a.Name,
-                    Description = a.Description
-                }).ToList(),
-
-                Items = character.Items.Select(i => new ItemDto
-                {
-                    Name = i.Name,
-                    Description = i.Description
-                }).ToList()
-            };
-
-            return result;
-        }
-
-        CharacterGetDto CharacterToGetDto(Character character)
-        {
-            var result = new CharacterGetDto()
-            {
-                Id = character.Id,
-                Name = character.Name,
-
-                Abilities = character.Abilities.Select(a => new AbilityDto
-                {
-                    Name = a.Name,
-                    Description = a.Description,
-                    CharacterId = a.CharacterId
-                }).ToList(),
-
-                Items = character.Items.Select(i => new ItemDto
-                {
-                    Name = i.Name,
-                    Description = i.Description,
-                    CharacterId = i.CharacterId
-                }).ToList()
-            };
-
-            return result;
-        }
-
-        Character UpdateDtoToCharacter(CharacterUpdateDto dto, Character character)
-        {
-            character.Name = dto.Name;
-            character.Strength = dto.Strength;
-            character.Dexterity = dto.Dexterity;
-            character.Constitution = dto.Constitution;
-            character.Intelligence = dto.Intelligence;
-            character.Wisdom = dto.Wisdom;
-            character.Charisma = dto.Charisma;
-
-            return character;
+            return CharacterDto.FromCharacter(character);
         }
     }
 }
