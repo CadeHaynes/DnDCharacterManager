@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 using DnDCharacterManager.Data;
 using DnDCharacterManager.DTOs;
-using DnDCharacterManager.Models;
 
 namespace DnDCharacterManager.Controllers
 {
@@ -25,20 +24,24 @@ namespace DnDCharacterManager.Controllers
                 .Where(a => a.CharacterId == characterId)
                 .ToListAsync();
 
-            var abilityDtos = abilities.Select(a => AbilityToGetDto(a)).ToList();
+            var abilityDtos = abilities.Select(a => AbilityGetDto.FromAbility(a)).ToList();
 
             return abilityDtos;
         }
 
-        AbilityGetDto AbilityToGetDto(Ability ability)
+        [HttpGet("character/{characterId}/abilities/{abilityId}")]
+        public async Task<ActionResult<AbilityGetDto>> GetSelectedAbilityForCharacter(int characterId, int abilityId)
         {
-            var result = new AbilityGetDto()
-            {
-                Name = ability.Name,
-                Description = ability.Description
-            };
+            var ability = await _context.Abilities
+                .Where(a => a.Character.Id == characterId && a.Id == abilityId)
+                .FirstOrDefaultAsync();
 
-            return result;
+            if (ability == null)
+            {
+                return NotFound();
+            }
+
+            return AbilityGetDto.FromAbility(ability);
         }
     }
 }
