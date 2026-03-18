@@ -53,7 +53,6 @@ namespace DnDCharacterManager.Controllers
             return result;
         }
 
-        // POST: api/Character
         [HttpPost]
         public async Task<ActionResult<Character>> PostCharacter(CharacterCreateDto dto)
         {
@@ -69,7 +68,6 @@ namespace DnDCharacterManager.Controllers
             return CreatedAtAction(nameof(GetCharacter), new { id = character.Id }, result);
         }
 
-        // DELETE: api/Character
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCharacter(int id)
         {
@@ -87,7 +85,6 @@ namespace DnDCharacterManager.Controllers
             return NoContent();
         }
 
-        // PUT: api/Character/[number]
         [HttpPut("{id}")]
         public async Task<ActionResult<CharacterDto>> UpdateCharacter(int id, CharacterUpdateDto dto)
         {
