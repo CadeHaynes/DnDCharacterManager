@@ -4,6 +4,7 @@ namespace DnDCharacterManager.DTOs
 {
     public class AbilityGetDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
 
@@ -11,6 +12,7 @@ namespace DnDCharacterManager.DTOs
         {
             var dto = new AbilityGetDto
             {
+                Id = ability.Id,
                 Name = ability.Name,
                 Description = ability.Description
             };

@@ -29,11 +29,13 @@ namespace DnDCharacterManager.Controllers
             return abilityDtos;
         }
 
-        [HttpGet("character/{characterId}/abilities/{abilityId}")]
-        public async Task<ActionResult<AbilityGetDto>> GetSelectedAbilityForCharacter(int characterId, int abilityId)
+        [HttpGet("character/{characterId}/abilities/{abilityIndex}")]
+        public async Task<ActionResult<AbilityGetDto>> GetSelectedAbilityForCharacter(int characterId, int abilityIndex)
         {
             var ability = await _context.Abilities
-                .Where(a => a.Character.Id == characterId && a.Id == abilityId)
+                .Where(a => a.CharacterId == characterId)
+                .OrderBy(a => a.Id)
+                .Skip(abilityIndex)
                 .FirstOrDefaultAsync();
 
             if (ability == null)
