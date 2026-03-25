@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 using DnDCharacterManager.Data;
 using DnDCharacterManager.DTOs;
+using DnDCharacterManager.Models;
 
 namespace DnDCharacterManager.Controllers
 {
@@ -44,6 +45,31 @@ namespace DnDCharacterManager.Controllers
             }
 
             return AbilityGetDto.FromAbility(ability);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AbilityGetDto>> GetAbility(int id)
+        {
+            var ability = await _context.Abilities.FindAsync(id);
+
+            if (ability == null)
+            {
+                return NotFound();
+            }
+
+            return AbilityGetDto.FromAbility(ability);
+        }
+
+        [HttpPost("character/{characterId}")]
+        public async Task<ActionResult<AbilityCreateDto>> PostAbilityForCharacter(int characterId, AbilityCreateDto dto)
+        {
+            var ability = AbilityCreateDto.ToAbility(dto);
+            ability.CharacterId = characterId;
+
+            _context.Abilities.Add(ability);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetAbility), new { id = ability.Id }, AbilityGetDto.FromAbility(ability));
         }
     }
 }

@@ -16,6 +16,8 @@ namespace DnDCharacterManager.DTOs
         public List<AbilityCreateDto> Abilities { get; set; } = new();
         public List<ItemCreateDto> Items { get; set; } = new();
 
+        // This would need a reference to the user at some point.
+
         public static Character ToCharacter(CharacterCreateDto dto)
         {
             var character = new Character
