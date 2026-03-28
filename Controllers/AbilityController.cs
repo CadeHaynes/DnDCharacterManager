@@ -71,5 +71,25 @@ namespace DnDCharacterManager.Controllers
 
             return CreatedAtAction(nameof(GetAbility), new { id = ability.Id }, AbilityGetDto.FromAbility(ability));
         }
+
+        [HttpDelete("character/{characterId}/abilities/{abilityIndex}")]
+        public async Task<IActionResult> DeleteSelectedAbilityForCharacter(int characterId, int abilityIndex)
+        {
+            var ability = await _context.Abilities
+                .Where(a => a.CharacterId == characterId)
+                .OrderBy(a => a.Id)
+                .Skip(abilityIndex)
+                .FirstOrDefaultAsync();
+
+            if (ability == null)
+            {
+                return NotFound();
+            }
+
+            _context.Abilities.Remove(ability);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
