@@ -72,6 +72,24 @@ namespace DnDCharacterManager.Controllers
             return CreatedAtAction(nameof(GetAbility), new { id = ability.Id }, AbilityGetDto.FromAbility(ability));
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<AbilityDto>> UpdateAbility(int id, AbilityUpdateDto dto)
+        {
+            var ability = await _context.Abilities
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (ability == null)
+            {
+                return NotFound();
+            }
+
+            ability = AbilityUpdateDto.UpdateAbility(dto, ability);
+
+            await _context.SaveChangesAsync();
+
+            return AbilityDto.FromAbility();
+        }
+
         [HttpDelete("character/{characterId}/abilities/{abilityIndex}")]
         public async Task<IActionResult> DeleteSelectedAbilityForCharacter(int characterId, int abilityIndex)
         {
@@ -89,6 +107,27 @@ namespace DnDCharacterManager.Controllers
             _context.Abilities.Remove(ability);
             await _context.SaveChangesAsync();
 
+            return NoContent();
+        }
+
+        [HttpDelete("character/{characterId}")]
+        public async Task<IActionResult> DeleteAllAbilitiesForCharacter(int characterId)
+        {
+            var abilities = await _context.Abilities
+                .Where(a => a.CharacterId == characterId)
+                .ToListAsync();
+
+            if (!abilities.Any())
+            {
+                return NotFound();
+            }
+
+            foreach (var ability in abilities)
+            {
+                _context.Abilities.Remove(ability);
+            }
+
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }
