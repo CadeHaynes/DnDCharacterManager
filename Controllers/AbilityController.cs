@@ -87,7 +87,28 @@ namespace DnDCharacterManager.Controllers
 
             await _context.SaveChangesAsync();
 
-            return AbilityDto.FromAbility();
+            return AbilityDto.FromAbility(ability);
+        }
+
+        [HttpPut("character/{characterId}/abilities/{abilityIndex}")]
+        public async Task<ActionResult<AbilityDto>> UpdateSelectedAbilityForCharacter(int characterId, int abilityIndex, AbilityUpdateDto dto)
+        {
+            var ability = await _context.Abilities
+                .Where(a => a.CharacterId == characterId)
+                .OrderBy(a => a.Id)
+                .Skip(abilityIndex)
+                .FirstOrDefaultAsync();
+
+            if (ability == null)
+            {
+                return NotFound();
+            }
+
+            ability = AbilityUpdateDto.UpdateAbility(dto, ability);
+
+            await _context.SaveChangesAsync();
+
+            return AbilityDto.FromAbility(ability);
         }
 
         [HttpDelete("character/{characterId}/abilities/{abilityIndex}")]
