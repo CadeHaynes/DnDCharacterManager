@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 using DnDCharacterManager.Data;
 using DnDCharacterManager.DTOs;
-using DnDCharacterManager.Models;
 
 namespace DnDCharacterManager.Controllers
 {
