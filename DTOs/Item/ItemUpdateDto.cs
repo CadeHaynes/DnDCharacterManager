@@ -2,18 +2,15 @@
 
 namespace DnDCharacterManager.DTOs
 {
-    public class ItemCreateDto
+    public class ItemUpdateDto
     {
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public static Item ToItem(ItemCreateDto dto)
+        public static Item UpdateItem(ItemUpdateDto dto, Item item)
         {
-            var item = new Item
-            {
-                Name = dto.Name,
-                Description = dto.Description
-            };
+            item.Name = dto.Name;
+            item.Description = dto.Description;
 
             return item;
         }
