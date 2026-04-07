@@ -6,6 +6,7 @@ namespace DnDCharacterManager.DTOs
     {
         //Character Details
         public string Name { get; set; } = string.Empty;
+        public int Strength { get; set; }
         public int Id { get; set; }
 
         //Character possessions
@@ -18,6 +19,7 @@ namespace DnDCharacterManager.DTOs
             {
                 Id = character.Id,
                 Name = character.Name,
+                Strength = character.Strength,
 
                 Abilities = character.Abilities.Select(a => AbilityGetDto.FromAbility(a)).ToList(),
 
