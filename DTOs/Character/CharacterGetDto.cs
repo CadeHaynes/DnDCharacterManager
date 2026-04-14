@@ -5,9 +5,15 @@ namespace DnDCharacterManager.DTOs
     public class CharacterGetDto
     {
         //Character Details
+        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public int Strength { get; set; }
-        public int Id { get; set; }
+        public int Dexterity { get; set; }
+        public int Constitution { get; set; }
+        public int Intelligence { get; set; }
+        public int Wisdom { get; set; }
+        public int Charisma { get; set; }
+
 
         //Character possessions
         public List<ItemDto> Items { get; set; } = new();
@@ -20,6 +26,11 @@ namespace DnDCharacterManager.DTOs
                 Id = character.Id,
                 Name = character.Name,
                 Strength = character.Strength,
+                Dexterity = character.Dexterity,
+                Constitution = character.Constitution,
+                Intelligence = character.Intelligence,
+                Wisdom = character.Wisdom,
+                Charisma = character.Charisma,
 
                 Abilities = character.Abilities.Select(a => AbilityGetDto.FromAbility(a)).ToList(),
 
