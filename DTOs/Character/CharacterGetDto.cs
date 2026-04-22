@@ -16,7 +16,7 @@ namespace DnDCharacterManager.DTOs
 
 
         //Character possessions
-        public List<ItemDto> Items { get; set; } = new();
+        public List<ItemGetDto> Items { get; set; } = new();
         public List<AbilityGetDto> Abilities { get; set; } = new();
 
         public static CharacterGetDto FromCharacter(Character character)
@@ -34,12 +34,7 @@ namespace DnDCharacterManager.DTOs
 
                 Abilities = character.Abilities.Select(a => AbilityGetDto.FromAbility(a)).ToList(),
 
-                Items = character.Items.Select(i => new ItemDto
-                {
-                    Name = i.Name,
-                    Description = i.Description,
-                    CharacterId = i.CharacterId
-                }).ToList()
+                Items = character.Items.Select(i => ItemGetDto.FromItem(i)).ToList()
             };
 
             return dto;
