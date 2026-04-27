@@ -14,7 +14,8 @@ namespace DnDCharacterManager.DTOs
             var dto = new ItemDto()
             {
                 Name = item.Name,
-                Description = item.Description
+                Description = item.Description,
+                CharacterId = item.CharacterId
             };
 
             return dto;
